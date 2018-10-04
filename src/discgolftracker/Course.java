@@ -91,7 +91,6 @@ public class Course implements Serializable{
             usrDist = Integer.parseInt(in.next());
             
             test = new hole(usrPar, usrDist);
-            System.out.println(i);
             holeInfo[i] = new hole(usrPar, usrDist);            
             
             System.out.println("Hole " + (i+1) + " saved successfully!\n");

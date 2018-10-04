@@ -5,11 +5,13 @@
  */
 package discgolftracker;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Jim
  */
-public class hole {
+public class hole implements Serializable {
     private int par;
     private int distance;
     private int best;
