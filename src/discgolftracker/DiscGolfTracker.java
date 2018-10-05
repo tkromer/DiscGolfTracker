@@ -15,53 +15,32 @@ import java.util.Scanner;
 
 /**
  *
- * @author Jim
+ * @author Tim Kromer
  */
 public class DiscGolfTracker{
 
     /**
      * @param args the command line arguments
      */
-     
-     private String workingCourse;
-     private String openCourse;
-     private List<String> courseList = new ArrayList();
-     DiscGolfTracker test = new DiscGolfTracker();
-     
-
+    private List<String> courseList = new ArrayList();
      
     public static void main(String[] args) {
         // TODO code application logic here
         
         DiscGolfTracker test = new DiscGolfTracker();
-           String response;
-           Scanner in = new Scanner(System.in);
-           
-           List<String> fullList = new ArrayList();
-           
-           try{
-           FileInputStream readList = new FileInputStream("Course List.dat");
-           ObjectInputStream courseListObject = new ObjectInputStream(readList);
-               
-           test.courseList = (List)courseListObject.readObject();
-           
-           readList.close();
-           } catch (Exception e) {}
-         
-          System.out.print("Do you want to add a new course? (Y/N):  ");
-           response = in.next();
+        String response;
+        Scanner in = new Scanner(System.in); 
 
-           if (response.equals("y") || response.equals("Y")) {
-               test.addCourse();
-               System.out.println("Course Saved Successfully!");   
-           }
-           
-           System.out.println(fullList);
-                    
-                
-           
+        System.out.print("Do you want to add a new course? (Y/N):  ");
+        response = in.next();
 
-           System.out.println("\nDone!");
+        if (response.equals("y") || response.equals("Y")) {
+            test.addCourse();
+            System.out.println("Course Saved Successfully!");   
+        }
+           
+        test.printList();   
+        System.out.println("\nDone!");
     }
     
     public void addCourse() {
@@ -81,47 +60,44 @@ public class DiscGolfTracker{
                
                courseOut.writeObject(course);
                
-               // Add name of course to master list
-               courseList.add(course.getCourseName());
+           // Add name of course to master list
+           openList();
+           courseList.add(course.getCourseName());
                
-               FileOutputStream courseListFile = new FileOutputStream("Course List.dat");
-               ObjectOutputStream courseListOut = new ObjectOutputStream(courseListFile);
+           FileOutputStream courseListFile = new FileOutputStream("Course List.dat");
+           ObjectOutputStream courseListOut = new ObjectOutputStream(courseListFile);
                
-               courseListOut.writeObject(courseList);
+           courseListOut.writeObject(getList());
                
-               courseListFile.close();
+           courseListFile.close();
 
-              // out.close();
-               courseFile.close();
+           courseFile.close();
           }
           catch (IOException ex) {
-               System.out.println("IO Exception Caught Write");
+               System.out.println("IO Exception Caught Write" + ex);
           }
     }
         
-    public void openCourse(String courseName) {
-         
-         Course readCourse;
-         String filePath = "./Courses/" + courseName + ".dat";
-         //Deserialize Object
-          try {
-               // Read object from file
-               FileInputStream file = new FileInputStream(filePath);
-               ObjectInputStream fileIn = new ObjectInputStream(file);
+    public void openList() {
+        try{
+            FileInputStream readList = new FileInputStream("Course List.dat");
+            ObjectInputStream courseListObject = new ObjectInputStream(readList);
                
-               // Deserialize Object\
-               readCourse = (Course)fileIn.readObject();
-               
-               fileIn.close();
-               readCourse.printCourse();               
-          }
-          catch(IOException ex) {
-               System.out.println("Caught IO Exception Read");
-          }
-          
-          catch(ClassNotFoundException es) {
-               System.out.println("Class Not found Exception Read");
-          }
+            setCourseList((List)courseListObject.readObject());
+           
+            readList.close();
+        }catch (Exception e) {}
     }
     
+    public void setCourseList(List<String> newList) {
+        courseList = newList;
+    }
+    
+    public List<String> getList() {
+        return courseList;
+    }
+    
+    public void printList() {
+        System.out.println(getList());
+    }
 }
