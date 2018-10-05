@@ -96,7 +96,7 @@ public class Course implements Serializable{
             System.out.println("Hole " + (i+1) + " saved successfully!\n");
         }
         
-        in.close();
+
     }
     
     public void printCourse() {

@@ -8,8 +8,10 @@ package discgolftracker;
 import java.io.*;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import static javafx.scene.input.KeyCode.N;
+
 
 /**
  *
@@ -23,45 +25,74 @@ public class DiscGolfTracker{
      
      private String workingCourse;
      private String openCourse;
+     private List<String> courseList = new ArrayList();
+     DiscGolfTracker test = new DiscGolfTracker();
      
 
      
     public static void main(String[] args) {
         // TODO code application logic here
+        
+        DiscGolfTracker test = new DiscGolfTracker();
            String response;
            Scanner in = new Scanner(System.in);
            
+           List<String> fullList = new ArrayList();
            
-           System.out.print("Do you want to add a new course? (Y/N):  ");
+           try{
+           FileInputStream readList = new FileInputStream("Course List.dat");
+           ObjectInputStream courseListObject = new ObjectInputStream(readList);
+               
+           test.courseList = (List)courseListObject.readObject();
+           
+           readList.close();
+           } catch (Exception e) {}
+         
+          System.out.print("Do you want to add a new course? (Y/N):  ");
            response = in.next();
-           
-           while (response.equals("y") || response.equals("Y")) {
-                DiscGolfTracker test = new DiscGolfTracker();
-                test.addCourse();
+
+           if (response.equals("y") || response.equals("Y")) {
+               test.addCourse();
+               System.out.println("Course Saved Successfully!");   
            }
-           in.close();
+           
+           System.out.println(fullList);
+                    
+                
+           
+
            System.out.println("\nDone!");
-         
-         
     }
     
     public void addCourse() {
          Course course = new Course();
          course.setCourse();
          // Saves course as .dat file in /Courses/ folder
-         String fileName = "./Courses/" + course.getCourseName() + ".dat";
+         String courseFileName = "./Courses/" + course.getCourseName() + ".dat";
+         
+         
          
          // Serialize Object
            try {
-               FileOutputStream file = new FileOutputStream(fileName);
-               ObjectOutputStream out = new ObjectOutputStream(file);
+               FileOutputStream courseFile = new FileOutputStream(courseFileName);
+               ObjectOutputStream courseOut = new ObjectOutputStream(courseFile);
                
                //Write newly created course object to file
                
-               out.writeObject(course);
+               courseOut.writeObject(course);
+               
+               // Add name of course to master list
+               courseList.add(course.getCourseName());
+               
+               FileOutputStream courseListFile = new FileOutputStream("Course List.dat");
+               ObjectOutputStream courseListOut = new ObjectOutputStream(courseListFile);
+               
+               courseListOut.writeObject(courseList);
+               
+               courseListFile.close();
 
               // out.close();
-               file.close();
+               courseFile.close();
           }
           catch (IOException ex) {
                System.out.println("IO Exception Caught Write");
@@ -70,19 +101,19 @@ public class DiscGolfTracker{
         
     public void openCourse(String courseName) {
          
-         Course readCourse = null;
+         Course readCourse;
          String filePath = "./Courses/" + courseName + ".dat";
          //Deserialize Object
           try {
                // Read object from file
                FileInputStream file = new FileInputStream(filePath);
-               ObjectInputStream in = new ObjectInputStream(file);
+               ObjectInputStream fileIn = new ObjectInputStream(file);
                
                // Deserialize Object\
-               readCourse = (Course)in.readObject();
+               readCourse = (Course)fileIn.readObject();
                
-               //in.close();
-               //readCourse.printCourse();               
+               fileIn.close();
+               readCourse.printCourse();               
           }
           catch(IOException ex) {
                System.out.println("Caught IO Exception Read");
