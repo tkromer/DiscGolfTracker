@@ -22,7 +22,6 @@ public class DiscGolfTracker{
     /**
      * @param args the command line arguments
      */
-    private List<String> courseList = new ArrayList();
      
     public static void main(String[] args) {
         // TODO code application logic here
@@ -30,74 +29,81 @@ public class DiscGolfTracker{
         DiscGolfTracker test = new DiscGolfTracker();
         String response;
         Scanner in = new Scanner(System.in); 
+        Course testCourse;
 
         System.out.print("Do you want to add a new course? (Y/N):  ");
         response = in.next();
 
         if (response.equals("y") || response.equals("Y")) {
             test.addCourse();
-            System.out.println("Course Saved Successfully!");   
         }
-           
-        test.printList();   
-        System.out.println("\nDone!");
-    }
-    
-    public void addCourse() {
-         Course course = new Course();
-         course.setCourse();
-         // Saves course as .dat file in /Courses/ folder
-         String courseFileName = "./Courses/" + course.getCourseName() + ".dat";
-         
-         
-         
-         // Serialize Object
-           try {
-               FileOutputStream courseFile = new FileOutputStream(courseFileName);
-               ObjectOutputStream courseOut = new ObjectOutputStream(courseFile);
-               
-               //Write newly created course object to file
-               
-               courseOut.writeObject(course);
-               
-           // Add name of course to master list
-           openList();
-           courseList.add(course.getCourseName());
-               
-           FileOutputStream courseListFile = new FileOutputStream("Course List.dat");
-           ObjectOutputStream courseListOut = new ObjectOutputStream(courseListFile);
-               
-           courseListOut.writeObject(getList());
-               
-           courseListFile.close();
-
-           courseFile.close();
-          }
-          catch (IOException ex) {
-               System.out.println("IO Exception Caught Write" + ex);
-          }
-    }
         
-    public void openList() {
-        try{
-            FileInputStream readList = new FileInputStream("Course List.dat");
-            ObjectInputStream courseListObject = new ObjectInputStream(readList);
-               
-            setCourseList((List)courseListObject.readObject());
-           
-            readList.close();
-        }catch (Exception e) {}
-    }
+        test.viewCourses();
+        
+        /*try {
+            FileInputStream openCourse = new FileInputStream("./Courses/testCourse.dat");
+            ObjectInputStream cObject = new ObjectInputStream(openCourse);
+            
+            testCourse = (Course)cObject.readObject();
+            
+            for (int i = 0; i < testCourse.getCourseLength();i++) {
+                System.out.println("Par: " + testCourse.holeInfo[i].getPar());
+            }
+        } catch(Exception e){System.out.println(e);}*/
+
+    }// end main
     
-    public void setCourseList(List<String> newList) {
-        courseList = newList;
-    }
+    /*
+    * Creates course file in ./Courses directory and prompts the user to add
+    * another
+    */
+    public void addCourse() {
+        Course course = new Course();
+        course.createCourse();
+        Scanner usrIn = new Scanner(System.in);
+        String response;
+        // Saves course as .dat file in /Courses/ folder
+        String courseFileName = "./Courses/" + course.getCourseName() + ".dat";
+         
+        // Serialize course object to "course name".dat
+        try {
+            FileOutputStream courseFile = new FileOutputStream(courseFileName);
+            ObjectOutputStream courseOut = new ObjectOutputStream(courseFile);
+
+            //Write newly created course object to file
+            courseOut.writeObject(course);
+            courseFile.close();
+        }
+        catch (IOException ex) {
+            System.out.println("IO Exception Caught Write" + ex);
+        }
+
+        System.out.print("Would you like to add another course? (Y/N): ");
+        response = usrIn.next();
+
+        System.out.println("Course Saved Successfully!");
+
+        if (response.equals("Y") || response.equals("y")) {
+            addCourse();
+        }          
+    } // end addCourse
     
-    public List<String> getList() {
-        return courseList;
+    /*
+    * Reads list of course files present in the ./Courses dircectory and prints
+    * them to the screen.
+    *                       TO DO
+    * 1. Print par
+    * 2. Print best score
+    * 3. Make it look pretty
+    */
+    public void viewCourses() {
+        File folder = new File("./Courses");
+        File[] listOfCourses = folder.listFiles();
+        String file;
+        
+        for (int i = 0; i < listOfCourses.length; i++) {
+            file = listOfCourses[i].getName();
+            System.out.println((i + 1) + ". " + file.replace(".dat", "")); 
+        }
     }
-    
-    public void printList() {
-        System.out.println(getList());
-    }
-}
+} // end class

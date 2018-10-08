@@ -24,8 +24,7 @@ public class Course implements Serializable{
     
     public Course() {
         this.setCourseAvg(0);
-        this.setCourseBest(0);
-         
+        this.setCourseBest(0);         
     }
 
     public String getCourseName() {
@@ -68,7 +67,7 @@ public class Course implements Serializable{
         this.courseBest = courseBest;
     }
     
-    public void setCourse() {
+    public void createCourse() {
         int usrPar;
         int usrDist;
         Scanner in = new Scanner(System.in);
